@@ -6,7 +6,7 @@ import { CommonCrudController } from 'src/common/controller/common.crud.controll
 
 @Controller('roles')
 export class RoleController extends CommonCrudController(Role) {
-  constructor(private readonly roleService: RoleService) {
-    super(roleService);
+  constructor(private readonly service: RoleService) {
+    super(service);
   }
 }

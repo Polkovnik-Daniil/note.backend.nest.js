@@ -18,4 +18,14 @@ export class BookReader {
 
   @Column({ name: 'date_of_book_acceptance', type: 'timestamp' })
   dateOfBookAcceptance: Date;
+
+  @Column({
+    name: 'creation_date',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  creationDate: Date;
+
+  @Column({ name: 'edit_date', type: 'timestamp', nullable: true })
+  editDate: Date | null;
 }

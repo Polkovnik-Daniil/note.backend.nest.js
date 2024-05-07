@@ -1,48 +1,115 @@
-import { ICrudService } from '../interfaces/interface.crud.service';
+import { ICrud } from '../interfaces/interface.crud';
 
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { Type } from '@nestjs/common';
 
 type Constructor<I> = new (...args: any[]) => I; // Main Point
-export function CommonCrudService<T>(
-  entity: Constructor<T>,
-): Type<ICrudService<T>> {
+export function CommonCrudService<T>(entity: Constructor<T>): Type<ICrud> {
   @Injectable()
-  class CommonCrudServiceHost<T> implements ICrudService<T> {
+  class CommonCrudServiceHost<T> implements ICrud {
     constructor(
-      @InjectRepository(entity) public readonly repository: Repository<T>,
+      @InjectRepository(entity) public readonly repo: Repository<T>,
     ) {}
-    getPage<T>(numberPage: number): T[] {
-      throw new Error('Method not implemented.');
+    createElement(entity: any): any {
+      try {
+        this.repo.save(entity);
+      } catch (ex) {
+        Logger.log(ex.message);
+      }
     }
-    getElementById(id: string): T {
-      throw new Error('Method not implemented.');
+    createElements(entities: any[]): boolean {
+      entities.map((entity) => {
+        this.repo.save(entity);
+      });
+      return true;
     }
-    getCountPage(): number {
-      throw new Error('Method not implemented.');
+    async deleteElement(entity: any): Promise<boolean> {
+      return await this.repo
+        .remove(entity)
+        .then(() => {
+          return true;
+        })
+        .catch((ex) => {
+          Logger.log(ex.message);
+          return false;
+        });
     }
-    createElement(dto: T): boolean {
-      throw new Error('Method not implemented.');
+    async deleteElements(entities: any[]): Promise<boolean> {
+      return await this.repo
+        .remove(entities)
+        .then(() => {
+          return true;
+        })
+        .catch((ex) => {
+          Logger.log(ex.message);
+          return false;
+        });
     }
-    createElements(dtos: T[]): boolean {
-      throw new Error('Method not implemented.');
+    async deleteElementById(id: string): Promise<boolean> {
+      return await this.repo
+        .delete(id)
+        .then(() => {
+          return true;
+        })
+        .catch((ex) => {
+          Logger.log(ex.message);
+          return false;
+        });
     }
-    deleteElement(dto: T): boolean {
-      throw new Error('Method not implemented.');
+    async updateElement(entity: any): Promise<boolean> {
+      return await this.repo
+        .save(entity)
+        .then(() => {
+          return true;
+        })
+        .catch((ex) => {
+          Logger.log(ex.message);
+          return false;
+        });
     }
-    deleteElements(dtos: T[]): boolean {
-      throw new Error('Method not implemented.');
+    async updateElements(entities: any[]): Promise<boolean> {
+      return await this.repo
+        .save(entities)
+        .then(() => {
+          return true;
+        })
+        .catch((ex) => {
+          Logger.log(ex.message);
+          return false;
+        });
     }
-    deleteElementById(id: string): boolean {
-      throw new Error('Method not implemented.');
+    getPage(numberPage: number): any {
+      return true;
     }
-    updateElement(dto: T): boolean {
-      throw new Error('Method not implemented.');
+    async getElementById(id: string): Promise<any> {
+      const findOptions: FindOneOptions<T> = {
+        where: {
+          id: id,
+        } as unknown as FindOptionsWhere<T>,
+      };
+      return await this.repo
+        .findOne(findOptions)
+        .then((value) => {
+          if (!value) {
+            throw new Error('Value is not exists!');
+          }
+          return value;
+        })
+        .catch((ex) => {
+          Logger.log(ex.message);
+        });
     }
-    updateElements(dtos: T[]): boolean {
-      throw new Error('Method not implemented.');
+    async getCountPage(): Promise<any> {
+      return await this.repo
+        .count()
+        .then((value: number) => {
+          return value;
+        })
+        .catch((ex) => {
+          Logger.log(ex.message);
+        });
     }
   }
   return CommonCrudServiceHost;

@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common'
-import { TypeOrmModule as NestTypeOrmModule } from '@nestjs/typeorm'
+import { Module } from '@nestjs/common';
+import { TypeOrmModule as NestTypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -10,11 +10,12 @@ import { TypeOrmModule as NestTypeOrmModule } from '@nestjs/typeorm'
       username: process.env.MySQL_USERNAME,
       password: process.env.MySQL_PASSWORD,
       database: process.env.MySQL_DATABASE,
-      entities: [ 'dist/src/models/**/*.entity.js' ],
+      entities: ['dist/models/**/*.entity.js'],
       synchronize: true,
-      // migrations: [ 'dist/src/database/migrations/**/*.js' ],
+      // migrations: [ 'dist/database/migrations/**/*.js' ],
       // cli: { migrationsDir: '/src/database/migrations' },
-    })
-  ]
+      autoLoadEntities: true,
+    }),
+  ],
 })
 export class TypeOrmModule {}

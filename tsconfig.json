@@ -13,7 +13,6 @@
     "paths": {
       "@db/*": ["src/database/*"],
       "@models/*":["src/models/*"],
-      // "@modules/*":["src/modules/*"],
     },
     "incremental": true,
     "skipLibCheck": true,

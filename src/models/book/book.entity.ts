@@ -1,4 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Author } from '@models/author';
+import { Genre } from '@models/genre';
+import { Reader } from '@models/reader';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('books')
 export class Book {
   @PrimaryGeneratedColumn('uuid')
@@ -16,5 +19,23 @@ export class Book {
   @Column({ name: 'number_of_pages', type: 'integer', unique: true })
   numberOfPage: number;
 
-  //TODO: add new fields
+  @Column({
+    name: 'creation_date',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  creationDate: Date;
+
+  @Column({ name: 'edit_date', type: 'timestamp', nullable: true })
+  editDate: Date | null;
+  // TODO: add new fields
+
+  @ManyToMany(() => Reader, (reader) => reader.books)
+  readers: Reader[];
+
+  @ManyToMany(() => Author, (author) => author.books)
+  authors: Author[];
+
+  @ManyToMany(() => Genre, (genre) => genre.books)
+  genres: Genre[];
 }

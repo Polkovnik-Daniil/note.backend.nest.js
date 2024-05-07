@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { ConfigModule } from 'src/config.module';
 import { TypeOrmModule } from '@db/typeorm.module';
@@ -11,6 +11,7 @@ import { GenreModule } from '@models/genre';
 import { ReaderModule } from '@models/reader';
 import { UserModule } from '@models/user';
 import { RoleModule } from '@models/role';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 
 @Module({
   imports: [
@@ -27,4 +28,8 @@ import { RoleModule } from '@models/role';
     RoleModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

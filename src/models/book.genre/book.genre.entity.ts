@@ -9,4 +9,14 @@ export class BookGenre {
 
   @Column({ name: 'genre_id', type: 'uuid', length: 36 })
   genreId: string;
+
+  @Column({
+    name: 'creation_date',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  creationDate: Date;
+
+  @Column({ name: 'edit_date', type: 'timestamp', nullable: true })
+  editDate: Date | null;
 }

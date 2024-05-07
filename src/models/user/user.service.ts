@@ -1,5 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
-
+import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { CommonCrudService } from 'src/common/service/common.crud.service';
 

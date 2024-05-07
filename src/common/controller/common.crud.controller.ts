@@ -1,87 +1,61 @@
-import { ICrudController } from '../interfaces/interface.crud.controller';
-
-import { Get, Injectable, Logger, Post } from '@nestjs/common';
+import { Delete, Get, Injectable, Logger, Post, Put } from '@nestjs/common';
 import { Type } from '@nestjs/common';
-import { ICrudService } from '../interfaces/interface.crud.service';
+import { ICrud } from '../interfaces/interface.crud';
 
 type Constructor<I> = new (...args: any[]) => I; // Main Point
-export function CommonCrudController<T>(
-  entity: Constructor<T>,
-): Type<ICrudController<T>> {
+export function CommonCrudController<T>(entity: Constructor<T>): Type<ICrud> {
   @Injectable()
-  class CommonCrudControllerHost<T> implements ICrudController<T> {
-    constructor(public readonly service: ICrudService<T>) {}
+  class CommonCrudControllerHost implements ICrud {
+    constructor(public readonly service: ICrud) {}
     @Get('/')
-    getPage(numberPage: number): T[] {
-      throw new Error('Method not implemented.');
-    }
-    @Get(':id')
-    getElementById(id: string): T {
-      throw new Error('Method not implemented.');
+    async getPage(numberPage: number): Promise<any> {
+      return await this.service.getPage(numberPage).catch((ex) => {
+        Logger.log(ex.message);
+      });
     }
     @Get('/page')
-    getCountPage(): number {
-      throw new Error('Method not implemented.');
+    async getCountPage(): Promise<number> {
+      return await this.service.getCountPage();
+    }
+    @Get(':id')
+    async getElementById(id: string): Promise<boolean> {
+      return await this.service.deleteElementById(id);
     }
     @Post('/')
-    createElement(dto: T): boolean {
-      throw new Error('Method not implemented.');
+    async createElement(dto: any): Promise<boolean> {
+      // convert dto to entity
+      return await this.service.createElement(dto);
     }
-    createElements(dtos: T[]): boolean {
-      throw new Error('Method not implemented.');
+    @Post('/')
+    async createElements(dtos: any): Promise<boolean> {
+      // convert dto to entity
+      return await this.service.createElements(dtos);
     }
-    deleteElement(dto: T): boolean {
-      throw new Error('Method not implemented.');
+    @Delete('/')
+    async deleteElement(dto: any): Promise<boolean> {
+      // convert dto to entity
+      return await this.service.deleteElement(dto);
     }
-    deleteElements(dtos: T[]): boolean {
-      throw new Error('Method not implemented.');
+    @Delete('/')
+    deleteElements(dtos: any): boolean {
+      // convert dto to entity
+      return this.service.deleteElements(dtos);
     }
+    @Delete(':id')
     deleteElementById(id: string): boolean {
-      throw new Error('Method not implemented.');
+      // convert dto to entity
+      return this.service.deleteElementById(id);
     }
-    updateElement(dto: T): boolean {
-      throw new Error('Method not implemented.');
+    @Put('/')
+    updateElement(dto: any): boolean {
+      // convert dto to entity
+      return this.service.updateElement(dto);
     }
-    updateElements(dtos: T[]): boolean {
-      throw new Error('Method not implemented.');
+    @Put('/')
+    updateElements(dtos: any): boolean {
+      // convert dto to entity
+      return this.service.updateElement(dtos);
     }
   }
   return CommonCrudControllerHost;
 }
-
-// @Injectable()
-// export class GeneralizedController<T> implements ICrudController<T> {
-//   constructor(
-//     @InjectRepository(T) private readonly repository: Repository<T>,
-//   ) {}
-//     getPage(numberPage: number): T[] {
-//         throw new Error('Method not implemented.');
-//     }
-//     getElementById(id: string): T {
-//         throw new Error('Method not implemented.');
-//     }
-//     getCountPage(): number {
-//         throw new Error('Method not implemented.');
-//     }
-//     createElement(dto: T): boolean {
-//         throw new Error('Method not implemented.');
-//     }
-//     createElements(dtos: T[]): boolean {
-//         throw new Error('Method not implemented.');
-//     }
-//     deleteElement(dto: T): boolean {
-//         throw new Error('Method not implemented.');
-//     }
-//     deleteElements(dtos: T[]): boolean {
-//         throw new Error('Method not implemented.');
-//     }
-//     deleteElementById(id: string): boolean {
-//         throw new Error('Method not implemented.');
-//     }
-//     updateElement(dto: T): boolean {
-//         throw new Error('Method not implemented.');
-//     }
-//     updateElements(dtos: T[]): boolean {
-//         throw new Error('Method not implemented.');
-//     }
-// }

@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { EGgender } from './enum.gender';
+import { Role } from '..';
 
 @Entity('users')
 export class User {
@@ -28,10 +29,14 @@ export class User {
   @Column({ name: 'is_locked', type: 'boolean', default: false })
   isLocked: boolean;
 
-  @Column({ name: 'role_id', type: 'varchar' })
-  roleId: string;
+  @ManyToOne(() => Role, (role) => role.users)
+  role: Role;
 
-  @Column({ name: 'creation_date', type: 'timestamp' })
+  @Column({
+    name: 'creation_date',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   creationDate: Date;
 
   @Column({ name: 'edit_date', type: 'timestamp', nullable: true })
