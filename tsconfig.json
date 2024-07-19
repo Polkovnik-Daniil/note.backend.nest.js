@@ -12,7 +12,7 @@
     "baseUrl": "./",
     "paths": {
       "@db/*": ["src/database/*"],
-      "@models/*":["src/models/*"],
+      "@core/*":["src/core/*"],
     },
     "incremental": true,
     "skipLibCheck": true,

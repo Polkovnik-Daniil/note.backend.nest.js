@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { ConfigModule } from 'src/config.module';
 import { TypeOrmModule } from '@db/typeorm.module';
@@ -27,6 +27,7 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
     UserModule,
     RoleModule,
   ],
+  providers: [Logger]
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

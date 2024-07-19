@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-import { EGgender } from './enum.gender';
+import { EGgender } from './gender.enum';
 import { Role } from '..';
 
 @Entity('users')
