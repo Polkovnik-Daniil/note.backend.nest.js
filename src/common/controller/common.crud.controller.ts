@@ -1,8 +1,8 @@
 import { Delete, Get, Injectable, Logger, Post, Put } from '@nestjs/common';
 import { Type } from '@nestjs/common';
-import { ICrud } from '../interfaces/interface.crud';
+import { ICrud } from '@interfaces/interface.crud';
+import type { Constructor } from '@local-type/index';
 
-type Constructor<I> = new (...args: any[]) => I; // Main Point
 export function CommonCrudController<T>(entity: Constructor<T>): Type<ICrud> {
   @Injectable()
   class CommonCrudControllerHost implements ICrud {

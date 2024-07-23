@@ -2,15 +2,15 @@ import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { ConfigModule } from 'src/config.module';
 import { TypeOrmModule } from '@db/typeorm.module';
-import { AuthorModule } from '@models/author';
-import { BookModule } from '@models/book';
-import { BookAuthorModule } from '@models/book.author';
-import { BookGenreModule } from '@models/book.genre';
-import { BookReaderModule } from '@models/book.reader';
-import { GenreModule } from '@models/genre';
-import { ReaderModule } from '@models/reader';
-import { UserModule } from '@models/user';
-import { RoleModule } from '@models/role';
+import { AuthorModule } from '@core/author';
+import { BookModule } from '@core/book';
+import { BookAuthorModule } from '@core/book.author';
+import { BookGenreModule } from '@core/book.genre';
+import { BookReaderModule } from '@core/book.reader';
+import { GenreModule } from '@core/genre';
+import { ReaderModule } from '@core/reader';
+import { UserModule } from '@core/user';
+import { RoleModule } from '@core/role';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 
 @Module({

@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { instance } from './common/service/winston.logger';
+import { instance } from './common/services/winston.logger';
 import { WinstonModule } from 'nest-winston';
 
 async function bootstrap() {

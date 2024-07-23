@@ -4,8 +4,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { Type } from '@nestjs/common';
+import { Constructor } from '@local-type/type.constructor';
 
-type Constructor<I> = new (...args: any[]) => I; // Main Point
 export function CommonCrudService<T>(entity: Constructor<T>): Type<ICrud> {
   @Injectable()
   class CommonCrudServiceHost<T> implements ICrud {

@@ -4,6 +4,10 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+//TODO: Добавить таблицы
+//TODO: Добавить упущенные поля 
+//TODO: Добавить связи между таблицами
+
 generator client {
   provider = "prisma-client-js"
   binaryTargets   = ["native", "linux-musl"]
@@ -13,58 +17,266 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+//Создатели - содержит в том числе имена авторов
+model creator {
+    id String @id @default(uuid()) @unique
+    creator_code String @unique //Код создателя    
+    first_name String           //Имя
+    second_name String          //Фамилия
+    authors author[]
+    compiler compiler[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    editor editor[]
+    painters painters[]
+    translator translator[]
+}
+//Языки
+model language {
+    id String @id @default(uuid()) @unique
+    language_code String @unique    //Код языка
+    language String @unique         //Язык
+    reduction String @unique        //Сокращение
+    translator translator[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+//Места
+model place {
+    id String @id @default(uuid()) @unique
+    place_code String @unique   //Код места
+    room_number String @unique  //Номер комнаты
+    rack_number String @unique  //Номер стеллажа
+    shelf_number String @unique //Номер полки
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
+    placement placement[]
+}
+//Читатели
+model reader {
+    id String @id @default(uuid()) @unique
+    ticket_number String @unique//Номер билета
+    first_name String           //Имя
+    second_name String          //Фамилия
+    address String              //Адрес
+    phone_number String @unique //Номер телефона
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-model User {
+    extradition extradition[]
+}
+//Авторы
+model author {
   id String @id @default(uuid()) @unique
-  email String @unique
-  hashPassword String
-  roles Role @default(USER)
+  creator_code String @unique   //Код создателя
+  publication_code String       //Код издания
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  creator creator @relation(fields: [creator_code], references: [creator_code])
+  publication publication @relation(fields: [publication_code], references: [publication_code])
 }
-
-model Author {
+//Составители
+model compiler {
   id String @id @default(uuid()) @unique
-  nameFirst String 
-  nameLast String
-  birthDate DateTime
-  books Book[]
+  creator_code String       //Код создателя
+  publication_code String   //Код издания
+  creator creator @relation(fields: [creator_code], references: [creator_code])
+  publication publication @relation(fields: [publication_code], references: [publication_code])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-model Book {
-  id String @id @default(uuid())
-  title String
-  releaseDate DateTime
-  numberOfBooks Int
-  numberOfPage Int  
-  authors Author[]
-  genres Genre[]
-  readers Reader[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+//Редакторы
+model editor {
+    id String @id @default(uuid()) @unique
+    creator_code String     //Код создателя
+    publication_code String //Код издания
+    creator creator @relation(fields: [creator_code], references: [creator_code])
+    publication publication @relation(fields: [publication_code], references: [publication_code])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
-
-model Genre {
-  id String @id @default(uuid())
-  name String
-  books Book[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+//Художники
+model painters{
+    id String @id @default(uuid()) @unique
+    creator_code String     //Код создателя
+    publication_code String //Код издания
+    creator creator @relation(fields: [creator_code], references: [creator_code])
+    publication publication @relation(fields: [publication_code], references: [publication_code])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
-
-model Reader {
-  id String @id @default(uuid())
-  name String 
-  books Book[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+//Переводчики
+model translator {
+    id String @id @default(uuid()) @unique
+    creator_code String     //Код создателя
+    publication_code String //Код издания
+    language_code String    //Код языка
+    creator creator @relation(fields: [creator_code], references: [creator_code])
+    publication publication @relation(fields: [publication_code], references: [publication_code])
+    language language @relation(fields: [language_code], references: [language_code])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
+//Размещение
+model placement {
+    id String @id @default(uuid()) @unique
+    place_code String           //Код места
+    binding_number String       //Номер переплета
+    date_of_placement DateTime  //Дата размещения
+    date_of_withdrawal DateTime //Дата изъятия
+    place place @relation(fields: [place_code], references: [place_code])
+    binding binding @relation(fields: [binding_number], references: [binding_number])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+//Выдача
+model extradition {
+    id String @id @default(uuid()) @unique
+    ticket_number String    //Номер билета
+    binding_number String   //Номер переплета
+    date_of_issue DateTime  //Дата выдачи
+    term DateTime           //Срок
+    return_date DateTime    //Дата возврата
+    reader reader @relation(fields: [ticket_number], references: [ticket_number]) 
+    binding binding @relation(fields: [binding_number], references: [binding_number])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+//Переиздание
+model reissue {
+    id String @id @default(uuid()) @unique
+    character_code String   //Код характера ?
+    publication_code String //Код издания
+    character character @relation(fields: [character_code], references: [character_code])
+    publication publication @relation(fields: [publication_code], references: [publication_code])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+//Издание
+model publication {
+    id String @id @default(uuid()) @unique
+    publication_code String @unique //Код издания
+    title_code String               //Код заглавия
+    type_publication String         //Вид издания
+    volume_number String            //Номер тома
+    author_mark String              //Авторский знак ?
+    library_cipher String           //Библиотечный шифр ?
+    repetition String               //Повторность ?
+    publisher_code String           //Код издательства
+    year_of_publication DateTime    //Год издания
+    title title @relation(fields: [title_code], references: [title_code])
+    type_publication_entity type_publication @relation(fields: [type_publication], references: [type_publication]) 
+    publishing_house publishing_house @relation(fields: [publisher_code], references: [publisher_code])
+    book book[]
+    editor editor[]
+    authors author[]
+    reissue reissue[]
+    painters painters[]
+    compilers compiler[]
+    translator translator[]
+    annotation annotation[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+//Переплеты
+model binding {
+    id String @id @default(uuid()) @unique
+    binding_number String @unique   //Номер переплета
+    publication_code String         //Код издания
+    price Decimal                   //Цена
+    date_of_purchase DateTime       //Дата приобретения
+    annotation annotation @relation(fields: [publication_code], references: [publication_code])
+    placement placement[]
+    extradition extradition[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+//Характеры
+model character {
+    id String @id @default(uuid()) @unique
+    character_code String @unique   //Код характера
+    nature_of_reissue String        //Характер переиздания ?
+    reissue reissue[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+//Заглавия
+model title {
+    id String @id @default(uuid()) @unique
+    title_code String @unique   //Код заглавия
+    title String                //Заглавие
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
+    publication publication[]
+}
+//Вид издания
+model type_publication {
+    id String @id @default(uuid()) @unique
+    type_publication String @unique //Вид издания
+    name_of_type String             //Название вида
+    publication publication[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+//Издательства
+model publishing_house {
+    id String @id @default(uuid()) @unique
+    publisher_code String @unique   //Код издательства
+    name String                     //Название
+    city String                     //Город
+    publication publication[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+//Аннотации
+model annotation {
+    id String @id @default(uuid()) @unique
+    publication_code String  @unique    //Код издания
+    annotation String                   //Аннотация
+    publication publication @relation(fields: [publication_code], references: [publication_code])
+    binding binding[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+//Пользователь
+model user {
+    id String @id @default(uuid()) @unique
+    first_name String
+    second_name String
+    email String
+    hash_passsword String
+    active Boolean
+    role Role @default(USER)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt 
+}
+//Книга
+model book {
+    id String @id @default(uuid()) @unique
+    title String
+    numberOfBooks Int
+    numberOfPage Int  
+    genre_name String
+    publication_code String
+    publication publication @relation(fields: [publication_code], references: [publication_code])
+    genre genre @relation(fields: [genre_name], references: [name])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt 
+}
+//Жанр
+model genre {
+    id String @id @default(uuid()) @unique
+    name String @unique
+    book book[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt 
+}
+//Роли
 enum Role {
-  ADMIN
-  USER
-  UNKNOWN
+    ADMIN
+    MODERATOR
+    USER
+    UNKNOWN
 }

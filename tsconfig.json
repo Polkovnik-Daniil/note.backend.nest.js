@@ -13,6 +13,8 @@
     "paths": {
       "@db/*": ["src/database/*"],
       "@core/*":["src/core/*"],
+      "@interfaces/*":["src/common/interfaces/*"],
+      "@local-type/*":["src/common/types/*"],
     },
     "incremental": true,
     "skipLibCheck": true,
