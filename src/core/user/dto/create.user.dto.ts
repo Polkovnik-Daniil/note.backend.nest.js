@@ -1,15 +1,13 @@
-import { EGgender } from '../gender.enum';
-import { Role } from '@models/role';
+import { StringOrDate } from '@local-types/core/type.string.or.date';
+import { Prisma, Role } from '@prisma/client';
 
-export class CreateUserDto {
+export class CreateUserDto implements Prisma.UserCreateInput {
+  first_name: string;
+  second_name: string;
   email: string;
-  hashPassword: string;
-  nameFirst: string;
-  nameLast: string;
-  birthDat: Date;
-  gender: EGgender;
-  isLocked: boolean;
-  role: Role;
-  editDate: Date;
+  hash_passsword: string;
+  active: boolean;
+  role?: Role;
+  createdAt?: StringOrDate;
+  updatedAt?: StringOrDate;
 }
-

@@ -1,0 +1,1 @@
+export type StringOrDate = string | Date;
