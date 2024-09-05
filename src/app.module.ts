@@ -1,7 +1,7 @@
 import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
 
 import { ConfigModule } from 'src/config.module';
-import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { CustomeLoggerMiddleware } from './middlewares/logger.middleware';
 import { PrismaModule } from '@db/prisma.module';
 import { UserModule } from './core/user/user.module';
 
@@ -15,6 +15,7 @@ import { UserModule } from './core/user/user.module';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    //Custome Logger for Route
+    consumer.apply(CustomeLoggerMiddleware).forRoutes('*');
   }
 }

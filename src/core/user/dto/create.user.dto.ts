@@ -1,13 +1,18 @@
-import { StringOrDate } from '@local-types/core/type.string.or.date';
-import { Prisma, Role } from '@prisma/client';
+import { $Enums, Prisma } from '@prisma/client';
 
 export class CreateUserDto implements Prisma.UserCreateInput {
+  id?: string;
   first_name: string;
-  second_name: string;
+  surname_name: string;
   email: string;
   hash_passsword: string;
-  active: boolean;
-  role?: Role;
-  createdAt?: StringOrDate;
-  updatedAt?: StringOrDate;
+  isActivated: boolean;
+  isEmailVerified: boolean;
+  role?: $Enums.Role;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+  Note?: Prisma.NoteCreateNestedManyWithoutUserInput;
+  Label?: Prisma.LabelCreateNestedManyWithoutUserInput;
+  Reader?: Prisma.ReaderCreateNestedManyWithoutUserInput;
+  Editor?: Prisma.EditorCreateNestedManyWithoutUserInput;
 }

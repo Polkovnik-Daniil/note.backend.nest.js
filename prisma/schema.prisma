@@ -19,94 +19,100 @@ datasource db {
 }
 
 model Label {
-    id String @id @default(uuid()) @unique
-    name String
-    user_id String
+    id              String      @id @default(uuid()) @unique
+    user_id         String
+    name            String
     
-    user User @relation(fields: [user_id], references: [id])
-    label_notes Label_Notes @relation(fields: [id], references: [label_id])
+    Reader          Reader[]
+    Editor          Editor[]
+    user            User        @relation(fields: [user_id], references: [id])
+    label_notes     LabelNotes @relation(fields: [id], references: [label_id])
     
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 }
 
-model Label_Notes {
-    id String @id @default(uuid()) @unique
-    note_id String @unique
-    label_id String @unique
-    isPublic Boolean @default(false)
+model LabelNotes {
+    id              String  @id @default(uuid()) @unique
+    note_id         String  @unique
+    label_id        String  @unique
+    isPublic        Boolean @default(false)
 
-    notes Note[]
-    labels Label[]
-    Editor Editor[]
-    Reader Reader[]
+    notes           Note[]
+    labels          Label[]
+    Editor          Editor[]
+    Reader          Reader[]
     
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
 }
 
 model Note {
-    id String @id @default(uuid()) @unique
-    title String 
-    description String
-    content Json
-    isPublic Boolean @default(false)
-    user_id String
+    id              String      @id @default(uuid()) @unique
+    title           String 
+    description     String
+    content         Json
+    isPublic        Boolean     @default(false)
+    user_id         String
     
-    Reader Reader[]
-    Editor Editor[]
-    user User @relation(fields: [user_id], references: [id])
-    label_notes Label_Notes @relation(fields: [id], references: [note_id])
+    Reader          Reader[]
+    Editor          Editor[]
+    user            User        @relation(fields: [user_id], references: [id])
+    label_notes     LabelNotes @relation(fields: [id], references: [note_id])
     
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 }
 
 model Editor {
-    id String @id @default(uuid()) @unique
-    user_id String
-    note_id String
-    label_notes_id String
+    id              String      @id @default(uuid()) @unique
+    user_id         String
+    note_id         String
+    label_id        String
+    label_notes_id  String
     
-    note Note @relation(fields: [note_id], references: [id])
-    user User  @relation(fields: [user_id], references: [id])
-    label_note Label_Notes @relation(fields: [label_notes_id], references: [id])
+    note            Note        @relation(fields: [note_id], references: [id])
+    user            User        @relation(fields: [user_id], references: [id])
+    label           Label       @relation(fields: [label_id], references: [id])
+    label_note      LabelNotes @relation(fields: [label_notes_id], references: [id])
     
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 }
 
 model Reader {
-    id String @id @default(uuid()) @unique
-    user_id String
-    note_id String
-    label_notes_id String
+    id              String      @id @default(uuid()) @unique
+    user_id         String
+    note_id         String
+    label_id        String
+    label_notes_id  String
     
-    note Note  @relation(fields: [note_id], references: [id])
-    user User  @relation(fields: [user_id], references: [id])
-    label_note Label_Notes  @relation(fields: [label_notes_id], references: [id])
+    note            Note        @relation(fields: [note_id], references: [id])
+    user            User        @relation(fields: [user_id], references: [id])
+    label           Label       @relation(fields: [label_id], references: [id])
+    label_note      LabelNotes @relation(fields: [label_notes_id], references: [id])
     
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 }
 
 model User {
-    id String @id @default(uuid()) @unique
-    first_name String
-    surname_name String
-    email String @unique
-    hash_passsword String
-    isActivated Boolean
+    id              String      @id @default(uuid()) @unique
+    first_name      String
+    surname_name    String
+    email           String      @unique
+    hash_passsword  String
+    isActivated     Boolean
     isEmailVerified Boolean
     
-    Note Note[]
-    Label Label[]
-    Reader Reader[]
-    role Role @default(USER)
-    Editor Editor[]
+    Note            Note[]
+    Label           Label[]
+    Reader          Reader[]
+    role            Role        @default(USER)
+    Editor          Editor[]
     
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 }
 
 enum Role {
