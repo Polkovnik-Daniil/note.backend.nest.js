@@ -1,10 +1,8 @@
 import {
-  Editor,
   Label,
-  LabelNotes,
+  LabelNote,
   Note,
   PrismaClient,
-  Reader,
   User,
 } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
@@ -19,15 +17,15 @@ async function main() {
 
   //User
   const countUser: number = await prisma.user.count();
-  if (countUser === 0) {
+  if (countUser === 0 && countUser < 10) {
     await Promise.all(
-      Array.from({ length: 10 }).map((_, index) => {
-        prisma.user.create({
+      Array.from({ length: 10 }).map(async (_, index) => {
+        await prisma.user.create({
           data: {
             email: `test${index}@prisma.io`,
-            first_name: 'Alex',
-            surname_name: 'Camino',
-            hash_passsword: bcrypt.hashSync('1', 10),
+            firstName: 'Alex',
+            surnameName: 'Camino',
+            hashPasssword: bcrypt.hashSync('1', 10),
             isEmailVerified: true,
             isActivated: true,
           },
@@ -42,13 +40,13 @@ async function main() {
 
   //Label
   const countLabel: number = await prisma.label.count();
-  if (countLabel === 0) {
+  if (countLabel === 0 && countLabel < 10) {
     await Promise.all(
-      Array.from({ length: 10 }).map((_, index) => {
-        prisma.label.create({
+      Array.from({ length: 10 }).map(async (_, index) => {
+        await prisma.label.create({
           data: {
-            name: `test${index}_name`,
-            user_id: users[index].id,
+            name: `test${index}Name`,
+            userId: users[index].id,
           },
         });
       }),
@@ -61,16 +59,16 @@ async function main() {
 
   //Note
   const countNotes: number = await prisma.note.count();
-  if (countNotes === 0) {
+  if (countNotes === 0 && countNotes < 10) {
     await Promise.all(
-      Array.from({ length: 10 }).map((_, index) => {
-        prisma.note.create({
+      Array.from({ length: 10 }).map(async (_, index) => {
+        await prisma.note.create({
           data: {
             title: `test${index}_title`,
             description: `test${index}_description`,
             content: null,
             isPublic: true,
-            user_id: users[index].id,
+            userId: users[index].id,
           },
         });
       }),
@@ -82,67 +80,66 @@ async function main() {
   let notes: Note[] = await prisma.note.findMany({ take: 10 });
 
   //LabelNotes
-  const countLabelNotes: number = await prisma.labelNotes.count();
-  if (countLabelNotes === 0) {
+  const countLabelNote: number = await prisma.labelNote.count();
+  if (countLabelNote === 0 && countLabelNote < 10) {
     await Promise.all(
-      Array.from({ length: 10 }).map((_, index) => {
-        prisma.labelNotes.create({
+      Array.from({ length: 10 }).map(async (_, index) => {
+        await prisma.labelNote.create({
           data: {
-            note_id: notes[index].id,
-            label_id: labels[index].id,
+            noteId: notes[index].id,
+            labelId: labels[index].id,
             isPublic: true,
           },
         });
       }),
     );
-    seededMessage('Label');
+    seededMessage('LabelNotes');
   } else {
-    skipSeedingMessage('Label');
+    skipSeedingMessage('LabelNotes');
   }
-  let labelNotes: LabelNotes[] = await prisma.labelNotes.findMany({ take: 10 });
+  let labelNotes: LabelNote[] = await prisma.labelNote.findMany({ take: 10 });
 
   //Editor
   const countEditor: number = await prisma.editor.count();
-  if (countEditor === 0) {
+  if (countEditor === 0 && countEditor < 10) {
     await Promise.all(
-      Array.from({ length: 10 }).map((_, index) => {
-        prisma.editor.create({
+      Array.from({ length: 10 }).map(async (_, index) => {
+        await prisma.editor.create({
           data: {
-            user_id: users[index].id,
-            note_id: notes[index].id,
-            label_id: labels[index].id,
-            label_notes_id: labelNotes[index].id,
+            userId: users[index].id,
+            noteId: notes[index].id,
+            labelId: labels[index].id,
+            labelNotesId: labelNotes[index].id,
           },
         });
       }),
     );
-    seededMessage('Label');
+    seededMessage('Editor');
   } else {
-    skipSeedingMessage('Label');
+    skipSeedingMessage('Editor');
   }
   // let editors: Editor[] = await prisma.labelNotes.findMany({ take: 10 });
 
   //Reader
   const countReader: number = await prisma.reader.count();
-  if (countReader === 0) {
+  if (countReader === 0 && countReader < 10) {
     await Promise.all(
-      Array.from({ length: 10 }).map((_, index) => {
-        prisma.reader.create({
+      Array.from({ length: 10 }).map(async (_, index) => {
+        await prisma.reader.create({
           data: {
-            user_id: users[index].id,
-            note_id: notes[index].id,
-            label_id: labels[index].id,
-            label_notes_id: labelNotes[index].id,
+            userId: users[index].id,
+            noteId: notes[index].id,
+            labelId: labels[index].id,
+            labelNotesId: labelNotes[index].id,
           },
         });
       }),
     );
-    seededMessage('Label');
+    seededMessage('Reader');
   } else {
-    skipSeedingMessage('Label');
+    skipSeedingMessage('Reader');
   }
   // let readers: Reader[] = await prisma.reader.findMany({ take: 10 });
-
 }
 main()
   .then(async () => {

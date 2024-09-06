@@ -20,26 +20,26 @@ datasource db {
 
 model Label {
     id              String      @id @default(uuid()) @unique
-    user_id         String
+    userId         String
     name            String
     
     Reader          Reader[]
     Editor          Editor[]
-    user            User        @relation(fields: [user_id], references: [id])
-    label_notes     LabelNotes @relation(fields: [id], references: [label_id])
+    User            User        @relation(fields: [userId], references: [id])
+    LabelNotes      LabelNote   @relation(fields: [id], references: [labelId])
     
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 }
 
-model LabelNotes {
+model LabelNote {
     id              String  @id @default(uuid()) @unique
-    note_id         String  @unique
-    label_id        String  @unique
+    noteId          String  @unique
+    labelId         String  @unique
     isPublic        Boolean @default(false)
 
-    notes           Note[]
-    labels          Label[]
+    Notes           Note[]
+    Labels          Label[]
     Editor          Editor[]
     Reader          Reader[]
     
@@ -51,14 +51,14 @@ model Note {
     id              String      @id @default(uuid()) @unique
     title           String 
     description     String
-    content         Json
+    content         Json?
     isPublic        Boolean     @default(false)
-    user_id         String
+    userId         String
     
     Reader          Reader[]
     Editor          Editor[]
-    user            User        @relation(fields: [user_id], references: [id])
-    label_notes     LabelNotes @relation(fields: [id], references: [note_id])
+    User            User        @relation(fields: [userId], references: [id])
+    LabelNote       LabelNote   @relation(fields: [id], references: [noteId])
     
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
@@ -66,15 +66,15 @@ model Note {
 
 model Editor {
     id              String      @id @default(uuid()) @unique
-    user_id         String
-    note_id         String
-    label_id        String
-    label_notes_id  String
+    userId          String
+    noteId          String
+    labelId         String
+    labelNotesId    String
     
-    note            Note        @relation(fields: [note_id], references: [id])
-    user            User        @relation(fields: [user_id], references: [id])
-    label           Label       @relation(fields: [label_id], references: [id])
-    label_note      LabelNotes @relation(fields: [label_notes_id], references: [id])
+    note            Note        @relation(fields: [noteId], references: [id])
+    user            User        @relation(fields: [userId], references: [id])
+    Label           Label       @relation(fields: [labelId], references: [id])
+    LabelNote       LabelNote   @relation(fields: [labelNotesId], references: [id])
     
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
@@ -82,15 +82,15 @@ model Editor {
 
 model Reader {
     id              String      @id @default(uuid()) @unique
-    user_id         String
-    note_id         String
-    label_id        String
-    label_notes_id  String
+    userId         String
+    noteId         String
+    labelId        String
+    labelNotesId  String
     
-    note            Note        @relation(fields: [note_id], references: [id])
-    user            User        @relation(fields: [user_id], references: [id])
-    label           Label       @relation(fields: [label_id], references: [id])
-    label_note      LabelNotes @relation(fields: [label_notes_id], references: [id])
+    note            Note        @relation(fields: [noteId], references: [id])
+    user            User        @relation(fields: [userId], references: [id])
+    Label           Label       @relation(fields: [labelId], references: [id])
+    LabelNote       LabelNote   @relation(fields: [labelNotesId], references: [id])
     
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
@@ -98,17 +98,17 @@ model Reader {
 
 model User {
     id              String      @id @default(uuid()) @unique
-    first_name      String
-    surname_name    String
+    firstName      String
+    surnameName    String
     email           String      @unique
-    hash_passsword  String
+    hashPasssword   String
     isActivated     Boolean
     isEmailVerified Boolean
     
     Note            Note[]
     Label           Label[]
     Reader          Reader[]
-    role            Role        @default(USER)
+    Role            Role        @default(USER)
     Editor          Editor[]
     
     createdAt       DateTime    @default(now())
