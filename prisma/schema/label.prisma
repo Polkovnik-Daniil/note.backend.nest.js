@@ -1,0 +1,14 @@
+
+model Label {
+    id              String      @id @default(uuid()) @unique
+    userId          String
+    name            String
+    
+    Reader          Reader[]
+    Editor          Editor[]
+    User            User        @relation(fields: [userId], references: [id])
+    LabelNotes      LabelNote   @relation(fields: [id],     references: [labelId])
+    
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+}

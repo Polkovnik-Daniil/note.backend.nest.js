@@ -1,0 +1,18 @@
+model User {
+    id              String      @id @default(uuid()) @unique
+    firstName       String
+    surnameName     String
+    email           String      @unique
+    hashPasssword   String
+    isActivated     Boolean
+    isEmailVerified Boolean
+    
+    Note            Note[]
+    Label           Label[]
+    Reader          Reader[]
+    Role            Role        @default(USER)
+    Editor          Editor[]
+    
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+}

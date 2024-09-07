@@ -1,0 +1,16 @@
+model Note {
+    id              String      @id @default(uuid()) @unique
+    title           String 
+    description     String
+    content         Json?
+    isPublic        Boolean     @default(false)
+    userId          String
+    
+    Reader          Reader[]
+    Editor          Editor[]
+    User            User        @relation(fields: [userId], references: [id])
+    LabelNote       LabelNote   @relation(fields: [id],     references: [noteId])
+    
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+}

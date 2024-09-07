@@ -1,10 +1,4 @@
-import {
-  Label,
-  LabelNote,
-  Note,
-  PrismaClient,
-  User,
-} from '@prisma/client';
+import { Label, LabelNote, Note, PrismaClient, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -38,25 +32,6 @@ async function main() {
   }
   let users: User[] = await prisma.user.findMany({ take: 10 });
 
-  //Label
-  const countLabel: number = await prisma.label.count();
-  if (countLabel === 0 && countLabel < 10) {
-    await Promise.all(
-      Array.from({ length: 10 }).map(async (_, index) => {
-        await prisma.label.create({
-          data: {
-            name: `test${index}Name`,
-            userId: users[index].id,
-          },
-        });
-      }),
-    );
-    seededMessage('Label');
-  } else {
-    skipSeedingMessage('Label');
-  }
-  let labels: Label[] = await prisma.label.findMany({ take: 10 });
-
   //Note
   const countNotes: number = await prisma.note.count();
   if (countNotes === 0 && countNotes < 10) {
@@ -78,6 +53,25 @@ async function main() {
     skipSeedingMessage('Note');
   }
   let notes: Note[] = await prisma.note.findMany({ take: 10 });
+
+  //Label
+  const countLabel: number = await prisma.label.count();
+  if (countLabel === 0 && countLabel < 10) {
+    await Promise.all(
+      Array.from({ length: 10 }).map(async (_, index) => {
+        await prisma.label.create({
+          data: {
+            name: `test${index}Name`,
+            userId: users[index].id,
+          },
+        });
+      }),
+    );
+    seededMessage('Label');
+  } else {
+    skipSeedingMessage('Label');
+  }
+  let labels: Label[] = await prisma.label.findMany({ take: 10 });
 
   //LabelNotes
   const countLabelNote: number = await prisma.labelNote.count();
