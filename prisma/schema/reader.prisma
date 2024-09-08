@@ -1,0 +1,8 @@
+model Reader {
+    id                  String      @id @default(uuid()) @unique
+    userId              String
+    User                User        @relation(fields: [userId], references: [id])
+    ReaderLabelNote     ReaderLabelNote[]
+    createdAt           DateTime    @default(now())
+    updatedAt           DateTime    @updatedAt
+}

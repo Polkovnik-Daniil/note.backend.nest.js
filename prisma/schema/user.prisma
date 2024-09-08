@@ -10,6 +10,8 @@ model User {
     Note            Note[]
     Label           Label[]
     Role            Role        @default(USER)
+    Reader          Reader[]
+    Editor          Editor[]
     
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt

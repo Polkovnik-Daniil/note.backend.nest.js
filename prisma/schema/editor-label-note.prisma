@@ -1,0 +1,9 @@
+model EditorLabelNote {
+    id              String      @id @default(uuid()) @unique
+    editorId        String
+    Editor          Editor      @relation(fields: [editorId], references: [id])
+    labelNoteId     String      
+    LabelNote       LabelNote   @relation(fields: [labelNoteId], references: [id])
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+}
