@@ -1,4 +1,14 @@
-import { Label, LabelNote, Note, PrismaClient, User } from '@prisma/client';
+import {
+  Editor,
+  EditorLabelNote,
+  Label,
+  LabelNote,
+  Note,
+  PrismaClient,
+  Reader,
+  ReaderLabelNote,
+  User,
+} from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -31,6 +41,42 @@ async function main() {
     skipSeedingMessage('User');
   }
   let users: User[] = await prisma.user.findMany({ take: 10 });
+
+  //Editor
+  const countEditor: number = await prisma.editor.count();
+  if (countEditor === 0 && countEditor < 10) {
+    await Promise.all(
+      Array.from({ length: 10 }).map(async (_, index) => {
+        await prisma.editor.create({
+          data: {
+            userId: users[index].id,
+          },
+        });
+      }),
+    );
+    seededMessage('Editor');
+  } else {
+    skipSeedingMessage('Editor');
+  }
+  let editors: Editor[] = await prisma.editor.findMany({ take: 10 });
+
+  //Reader
+  const countReader: number = await prisma.reader.count();
+  if (countReader === 0 && countReader < 10) {
+    await Promise.all(
+      Array.from({ length: 10 }).map(async (_, index) => {
+        await prisma.reader.create({
+          data: {
+            userId: users[index].id,
+          },
+        });
+      }),
+    );
+    seededMessage('Reader');
+  } else {
+    skipSeedingMessage('Reader');
+  }
+  let readers: Reader[] = await prisma.reader.findMany({ take: 10 });
 
   //Label
   const countLabel: number = await prisma.label.count();
@@ -73,7 +119,7 @@ async function main() {
   }
   let notes: Note[] = await prisma.note.findMany({ take: 10 });
 
-  //LabelNotes
+  //LabelNote
   const countLabelNote: number = await prisma.labelNote.count();
   if (countLabelNote === 0 && countLabelNote < 10) {
     await Promise.all(
@@ -87,60 +133,63 @@ async function main() {
         });
       }),
     );
-    seededMessage('LabelNotes');
+    seededMessage('LabelNote');
   } else {
-    skipSeedingMessage('LabelNotes');
+    skipSeedingMessage('LabelNote');
   }
   let labelNotes: LabelNote[] = await prisma.labelNote.findMany({ take: 10 });
 
-  //Editor
-  const countEditor: number = await prisma.editor.count();
-  if (countEditor === 0 && countEditor < 10) {
+  //EditorLabelNote
+  const countEditorLabelNote: number = await prisma.editorLabelNote.count();
+  if (countEditorLabelNote === 0 && countEditorLabelNote < 10) {
     await Promise.all(
       Array.from({ length: 10 }).map(async (_, index) => {
-        await prisma.editor.create({
+        await prisma.editorLabelNote.create({
           data: {
-            userId: users[index].id,
-            noteId: notes[index].id,
-            labelId: labels[index].id,
+            editorId: editors[index].id,
             labelNoteId: labelNotes[index].id,
           },
         });
       }),
     );
-    seededMessage('Editor');
+    seededMessage('EditorLabelNote');
   } else {
-    skipSeedingMessage('Editor');
+    skipSeedingMessage('EditorLabelNote');
   }
-  // let editors: Editor[] = await prisma.labelNotes.findMany({ take: 10 });
+  let editorLabelNotes: EditorLabelNote[] =
+    await prisma.editorLabelNote.findMany({
+      take: 10,
+    });
 
-  //Reader
-  const countReader: number = await prisma.reader.count();
-  if (countReader === 0 && countReader < 10) {
+  //ReaderLabelNote
+  const countReaderLabelNote: number = await prisma.readerLabelNote.count();
+  if (countReaderLabelNote === 0 && countReaderLabelNote < 10) {
     await Promise.all(
       Array.from({ length: 10 }).map(async (_, index) => {
-        await prisma.reader.create({
+        await prisma.readerLabelNote.create({
           data: {
-            userId: users[index].id,
-            noteId: notes[index].id,
-            labelId: labels[index].id,
-            labelNotesId: labelNotes[index].id,
+            readerId: readers[index].id,
+            labelNoteId: labelNotes[index].id,
           },
         });
       }),
     );
-    seededMessage('Reader');
+    seededMessage('ReaderLabelNote');
   } else {
-    skipSeedingMessage('Reader');
+    skipSeedingMessage('ReaderLabelNote');
   }
-  // let readers: Reader[] = await prisma.reader.findMany({ take: 10 });
+  let readerLabelNotes: ReaderLabelNote[] =
+    await prisma.readerLabelNote.findMany({
+      take: 10,
+    });
 }
 main()
   .then(async () => {
     await prisma.$disconnect();
+    console.log('Database seeded successfully!');
   })
   .catch(async (e) => {
-    console.error(e);
+    console.error('Seeding error:', e);
     await prisma.$disconnect();
     process.exit(1);
   });
