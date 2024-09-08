@@ -16,14 +16,14 @@ datasource db {
 }
 
 enum Role {
-    ADMIN
-    USER
-    UNKNOWN
+  ADMIN
+  USER
+  UNKNOWN
 }
 
 enum Role_Notes {
-    OWNER
-    EDITOR
-    READER
-    UNKNOWN
+  OWNER
+  EDITOR
+  READER
+  UNKNOWN
 }

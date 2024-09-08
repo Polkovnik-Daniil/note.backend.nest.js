@@ -32,7 +32,6 @@
 $ npm install
 $ npm prisma generate
 $ npm run prisma-migrate 
-$ npm run seed-sync
 $ npm run seed
 $ npm run start:dev
 ```

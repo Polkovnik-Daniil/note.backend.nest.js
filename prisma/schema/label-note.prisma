@@ -4,11 +4,9 @@ model LabelNote {
     labelId         String      @unique
     isPublic        Boolean     @default(false)
 
-    Notes           Note[]
-    Labels          Label[]
-    Editor          Editor[]
-    Reader          Reader[]
-    
+    Label           Label       @relation(fields: [labelId], references: [id])
+    Note            Note        @relation(fields: [noteId], references: [id])
+
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 }

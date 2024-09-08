@@ -9,9 +9,7 @@ model User {
     
     Note            Note[]
     Label           Label[]
-    Reader          Reader[]
     Role            Role        @default(USER)
-    Editor          Editor[]
     
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
