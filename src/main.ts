@@ -16,8 +16,8 @@ async function bootstrap() {
   app.enableShutdownHooks();
   //swagger
   const config = new DocumentBuilder()
-    .setTitle('Tapply BE')
-    .setDescription('BE Server for LMSYV')
+    .setTitle('Note BE')
+    .setDescription('BE Server for View')
     .setVersion('1.0')
     .addBearerAuth(
       {

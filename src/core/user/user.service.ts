@@ -1,24 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Prisma, User } from '@prisma/client';
 import { UserRepository } from './user.repository';
-import { Prisma } from '@prisma/client';
-import { UserOrNull, UsersOrNull, IdOrEmail } from '@local-types/user';
+import { UserOrNull, UsersOrNull } from '@local-types/user';
+import { UserUpdateDto, UserCreateDto } from '@validations/user';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { AlreadyExistsException } from '@exceptions/already-exists.exception';
 
 @Injectable()
 export class UserService {
   constructor(private repository: UserRepository) {}
-  async createUser(params: {
-    data: Prisma.UserCreateInput;
-  }): Promise<UserOrNull> {
-    const { email } = params.data;
-    const isExistsUser = await this.isExistsUser({ email });
-    if (!isExistsUser) {
-      throw new Error('A user with such an email already exists!');
+  async createUser(data: UserCreateDto): Promise<UserOrNull> {
+    let statusCode = HttpStatus.CONFLICT;
+    try {
+      //Check is exists user
+      const user: User = await this.repository.getUserByEmail(data.email);
+      if (user) {
+        throw new AlreadyExistsException(
+          `A user with such an email ${user.email} already exists!`,
+        );
+      }
+      return this.repository.createUser(data);
+    } catch (error) {
+      throw new HttpException((error as Error).message, statusCode);
     }
-    return this.repository.createUser(params);
   }
+
   async getUser(id: string): Promise<UserOrNull> {
     return await this.repository.getUserById(id);
   }
+
   async getUsers(params: {
     skip?: number;
     take?: number;
@@ -26,29 +35,37 @@ export class UserService {
     where?: Prisma.UserWhereInput;
     orderBy?: Prisma.UserOrderByWithRelationInput;
   }): Promise<UsersOrNull> {
-    return await this.repository.getUsers(params);
+    const { skip, take, cursor, where, orderBy } = params;
+    return await this.repository.getUsers(skip, take, cursor, where, orderBy);
   }
-  async updateUser(params: {
-    id: string;
-    data: Prisma.UserCreateInput;
-  }): Promise<UserOrNull> {
-    const { id } = params;
-    const isExistsUser = await this.isExistsUser({ id });
-    if (!isExistsUser) {
-      throw new Error('The user does not exist with this id!');
+
+  async updateUser(id: string, data: UserUpdateDto): Promise<UserOrNull> {
+    let statusCode = HttpStatus.CONFLICT;
+    //Check is exists user
+    try {
+      const user: User = await this.repository.getUserById(id);
+      if (!user) {
+        throw new AlreadyExistsException(
+          `The user does not exist with this id - ${id}!`,
+        );
+      }
+      return this.repository.updateUser(id, data);
+    } catch (error) {
+      throw new HttpException((error as Error).message, statusCode);
     }
-    return this.repository.updateUser(params);
   }
-  //todo: add new type isExistsUser
-  async isExistsUser(params: IdOrEmail): Promise<boolean> {
-    const { id, email } = params;
-    let user: UserOrNull = null;
-    if (!id) {
-      user = await this.repository.getUserByEmail(email);
+
+  async deleteUser(id: string): Promise<UserOrNull> {
+    let statusCode = HttpStatus.CONFLICT;
+    try {
+      //Check is exists user
+      const user: User = await this.repository.getUserById(id);
+      if (!user) {
+        throw new AlreadyExistsException(`The user already deleted!`);
+      }
+      return this.repository.deleteUser(id);
+    } catch (error) {
+      throw new HttpException((error as Error).message, statusCode);
     }
-    if (!email) {
-      user = await this.repository.getUserById(id);
-    }
-    return user != null ? true : false;
   }
 }

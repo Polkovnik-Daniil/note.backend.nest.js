@@ -1,13 +1,14 @@
 import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
-
 import { ConfigModule } from 'src/config.module';
 import { CustomeLoggerMiddleware } from './middlewares/logger.middleware';
 import { PrismaModule } from '@db/prisma.module';
-import { UserModule } from './core/user/user.module';
+import { UserModule } from '@core/user';
+import { RedisModule } from '@core/redis';
 
 @Module({
   imports: [
     ConfigModule, //Позволяет сперва подключить файл .env
+    RedisModule,
     PrismaModule,
     UserModule,
   ],
@@ -15,7 +16,7 @@ import { UserModule } from './core/user/user.module';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    //Custome Logger for Route
+    //Custom Logger for Route
     consumer.apply(CustomeLoggerMiddleware).forRoutes('*');
   }
 }

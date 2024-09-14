@@ -12,9 +12,11 @@
     "baseUrl": "./",
     "paths": {
       "@db/*": ["src/database/*"],
-      "@core/*":["src/core/*"],
-      "@interfaces/*":["src/interfaces/*"],
-      "@local-types/*":["src/types/*"],
+      "@core/*": ["src/core/*"],
+      "@interfaces/*": ["src/interfaces/*"],
+      "@local-types/*": ["src/types/*"],
+      "@validations/*": ["src/validations/*"],
+      "@exceptions/*": ["src/exceptions/*"]
     },
     "incremental": true,
     "skipLibCheck": true,
