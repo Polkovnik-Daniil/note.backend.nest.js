@@ -16,7 +16,8 @@
       "@interfaces/*": ["src/interfaces/*"],
       "@local-types/*": ["src/types/*"],
       "@validations/*": ["src/validations/*"],
-      "@exceptions/*": ["src/exceptions/*"]
+      "@exceptions/*": ["src/exceptions/*"],
+      "@services/*": ["src/services/*"],
     },
     "incremental": true,
     "skipLibCheck": true,

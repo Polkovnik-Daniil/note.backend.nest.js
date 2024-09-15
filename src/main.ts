@@ -1,16 +1,13 @@
-import { NestFactory } from '@nestjs/core';
-import { Logger, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { instance } from './services/winston.logger';
-import { WinstonModule } from 'nest-winston';
+import { NestFactory } from '@nestjs/core';
+import { logger } from '@services/winston.logger';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: WinstonModule.createLogger({
-      instance: instance,
-    }),
-    cors: true,
+    logger: logger, //logger
+    cors: true, //cors
   });
   app.setGlobalPrefix('api');
   app.enableShutdownHooks();

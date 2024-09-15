@@ -1,56 +1,41 @@
-import { createLogger, format, transports } from 'winston';
-import { WinstonModule, utilities as nestWinstonModuleUtilities } from 'nest-winston';
-import { dirname } from 'path';
+import 'winston-daily-rotate-file';
+import { WinstonModule } from 'nest-winston';
+import { format, transports } from 'winston';
+import { LoggerService } from '@nestjs/common';
 
-// custom log display format
-const customFormat = format.printf(({ timestamp, level, stack, message }) => {
-  return `${timestamp} - [${level.toUpperCase().padEnd(7)}] - ${stack || message}`;
-});
-
-const options = {
-  file: {
-    dirname: 'src/log',
-    filename: 'error.log',
-    level: 'error',
-  },
-  console: {
-    level: 'silly',
-  },
-};
-
-// for development environment
-const devLogger = {
-  format: format.combine(
-    format.timestamp(),
-    format.errors({ stack: true }),
-    customFormat,
-  ),
-  transports: [new transports.Console(options.console)],
-};
-
-// for production environment
-const prodLogger = {
-  format: format.combine(
-    format.timestamp(),
-    format.errors({ stack: true }),
-    format.json(),
-    nestWinstonModuleUtilities.format.nestLike(process.env.PROJECT_NAME, {
-      colors: true,
-      prettyPrint: true,
-    }),
-  ),
+export const logger: LoggerService = WinstonModule.createLogger({
   transports: [
-    new transports.File(options.file),
-    new transports.File({
-      dirname: 'src/log',
-      filename: 'combine.log',
-      level: 'info',
+    // file on daily rotation (error only)
+    new transports.DailyRotateFile({
+      dirname: 'dist/src/log',
+      // %DATE will be replaced by the current date
+      filename: `logs/%DATE%-error.log`,
+      level: 'error',
+      format: format.combine(format.timestamp(), format.json()),
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: false, // don't want to zip our logs
+      maxFiles: '30d', // will keep log until they are older than 30 days
+    }),
+    // same for all levels
+    new transports.DailyRotateFile({
+      dirname: 'dist/src/log',
+      filename: `logs/%DATE%-combined.log`,
+      format: format.combine(format.timestamp(), format.json()),
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: false,
+      maxFiles: '30d',
+    }),
+    new transports.Console({
+      level: 'silly',
+      format: format.combine(
+        format.cli(),
+        format.splat(),
+        format.timestamp(),
+        format.errors({stack: true}),
+        format.printf((info) => {
+          return `[${info.timestamp}] - [${info.level}] - [${info.message}]`;
+        }),
+      ),
     }),
   ],
-};
-
-// export log instance based on the current environment
-const instanceLogger =
-  process.env.NODE_ENV === 'production' ? prodLogger : devLogger;
-
-export const instance = createLogger(instanceLogger);
+});
