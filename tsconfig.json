@@ -11,13 +11,13 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@db/*": ["src/database/*"],
-      "@core/*": ["src/core/*"],
-      "@interfaces/*": ["src/interfaces/*"],
-      "@local-types/*": ["src/types/*"],
-      "@validations/*": ["src/validations/*"],
-      "@exceptions/*": ["src/exceptions/*"],
-      "@services/*": ["src/services/*"],
+      "@api-core/*":            ["apps/api/src/core/*"],
+      "@api-constants/*":       ["apps/api/src/constants/*"],
+      "@database-core/*":       ["apps/database/src/core/*"],
+      "@database-constants/*":  ["apps/database/src/constants/*"],
+      "@email-core/*":          ["apps/email/src/core/*"],
+      "@validation-core/*":     ["apps/database/src/validation/*"],
+      "@local-types/*":         ["apps/database/src/validation/types/*"]
     },
     "incremental": true,
     "skipLibCheck": true,
@@ -26,5 +26,6 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
+    //"paths": {}
   }
 }
