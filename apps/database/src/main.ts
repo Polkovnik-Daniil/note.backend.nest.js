@@ -11,11 +11,12 @@ async function bootstrap() {
       options: {
         client: {
           brokers: [
-            process.env.NODE_ENV === 'dev' ? 'localhost:9092' : 'kafka:9092',
+            'localhost:9092', // todo: 'kafka:9092'
           ],
         },
         consumer: {
           groupId: 'database-consumer',
+          //allowAutoTopicCreation: true,
         },
         producer: {
           createPartitioner: Partitioners.LegacyPartitioner,

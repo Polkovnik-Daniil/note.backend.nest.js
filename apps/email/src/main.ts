@@ -11,7 +11,7 @@ async function bootstrap() {
       options: {
         client: {
           brokers: [
-            process.env.NODE_ENV === 'dev' ? 'localhost:9092' : 'kafka:9092',
+            'localhost:9092', //'kafka:9092',
           ],
         },
         consumer: {

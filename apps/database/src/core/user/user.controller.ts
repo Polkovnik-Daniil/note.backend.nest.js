@@ -1,12 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, OnModuleInit } from '@nestjs/common';
 import { UserService } from './user.service';
 import { EventPattern } from '@nestjs/microservices';
 import { UserCreateEventDto, UserUpdateEventDto } from '@validation-core/user';
 import { UserEndpointList } from '@validation-core/types';
+import { Kafka } from 'kafkajs';
 
 @Controller()
 export class UserController {
   constructor(private readonly databaseService: UserService) {}
+
   @EventPattern(UserEndpointList.GET_USER + '.*')
   handlerGetUser(id: string) {
     return this.databaseService.getUser(id);
@@ -17,7 +19,7 @@ export class UserController {
     return this.databaseService.createUser(userCreateEventDto);
   }
 
-  @EventPattern(UserEndpointList.UPDATE_USER)
+  @EventPattern(UserEndpointList.UPDATE_USER + '.*')
   handlerUpdateUser(userUpdateEventDto: UserUpdateEventDto) {
     return this.databaseService.updateUser(
       userUpdateEventDto.id,

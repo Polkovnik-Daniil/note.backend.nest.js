@@ -1,4 +1,5 @@
 import { ClientsModuleOptions, Transport } from '@nestjs/microservices';
+import { Partitioners } from 'kafkajs';
 
 export const DatabaseServiceOptions: ClientsModuleOptions = [
   {
@@ -11,6 +12,9 @@ export const DatabaseServiceOptions: ClientsModuleOptions = [
       },
       consumer: {
         groupId: 'database-consumer',
+      },
+      producer: {
+        createPartitioner: Partitioners.LegacyPartitioner,
       },
     },
   },
