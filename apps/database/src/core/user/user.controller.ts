@@ -1,25 +1,28 @@
 import { Controller, Get, OnModuleInit } from '@nestjs/common';
 import { UserService } from './user.service';
-import { EventPattern } from '@nestjs/microservices';
+import { EventPattern, MessagePattern } from '@nestjs/microservices';
 import { UserCreateEventDto, UserUpdateEventDto } from '@validation-core/user';
 import { UserEndpointList } from '@validation-core/types';
-import { Kafka } from 'kafkajs';
+import { User } from '@prisma/client';
 
 @Controller()
 export class UserController {
   constructor(private readonly databaseService: UserService) {}
 
-  @EventPattern(UserEndpointList.GET_USER + '.*')
-  handlerGetUser(id: string) {
-    return this.databaseService.getUser(id);
+  //@EventPattern(UserEndpointList.GET_USER)
+  @MessagePattern(UserEndpointList.GET_USER)
+  async handlerGetUser(id: string) {
+    const user: User = await this.databaseService.getUser(id);
+    console.log(user);
+    return user;
   }
 
-  @EventPattern(UserEndpointList.CREATE_USER + '.*')
-  handlerCreateUser(userCreateEventDto: UserCreateEventDto) {
-    return this.databaseService.createUser(userCreateEventDto);
+  @EventPattern(UserEndpointList.CREATE_USER)
+  async handlerCreateUser(userCreateEventDto: UserCreateEventDto) {
+    return await this.databaseService.createUser(userCreateEventDto);
   }
 
-  @EventPattern(UserEndpointList.UPDATE_USER + '.*')
+  @EventPattern(UserEndpointList.UPDATE_USER)
   handlerUpdateUser(userUpdateEventDto: UserUpdateEventDto) {
     return this.databaseService.updateUser(
       userUpdateEventDto.id,
@@ -27,7 +30,7 @@ export class UserController {
     );
   }
 
-  @EventPattern(UserEndpointList.DELETE_USER + '.*')
+  @EventPattern(UserEndpointList.DELETE_USER)
   handlerDeleteUser(id: string) {
     return this.databaseService.deleteUser(id);
   }

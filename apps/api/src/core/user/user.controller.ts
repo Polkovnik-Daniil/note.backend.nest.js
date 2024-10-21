@@ -24,35 +24,16 @@ import { UserEndpointList, UserOrNull } from '@validation-core/types/user';
 import { ClientKafka } from '@nestjs/microservices';
 import { NameServices } from '@local-types/name.services.enum';
 import { RoutesEntities } from '@local-types/routes.entities';
+import { User } from '@prisma/client';
 
 @ApiTags(RoutesEntities.USERS)
 @Controller(RoutesEntities.USERS)
-@UseInterceptors(CacheInterceptor)
-export class UserController implements OnModuleInit, OnModuleDestroy {
+//@UseInterceptors(CacheInterceptor)
+export class UserController {
   constructor(
     private readonly service: UserService,
-    @Inject(NameServices.DATABASE) private readonly databaseClient: ClientKafka,
+    @Inject(NameServices.DATABASE) private readonly client: ClientKafka,
   ) {}
-
-  onModuleDestroy() {
-    this.databaseClient.close();
-  }
-
-  onModuleInit() {
-    this.databaseClient.subscribeToResponseOf(
-      UserEndpointList.CREATE_USER, // + '.*',
-    );
-    this.databaseClient.subscribeToResponseOf(
-      UserEndpointList.GET_USER, //+ '.*'
-    );
-    this.databaseClient.subscribeToResponseOf(
-      UserEndpointList.UPDATE_USER, // + '.*',
-    );
-    this.databaseClient.subscribeToResponseOf(
-      UserEndpointList.DELETE_USER, // + '.*',
-    );
-    this.databaseClient.connect();
-  }
 
   @Post('create-one')
   @CacheTTL(6000)
@@ -62,12 +43,13 @@ export class UserController implements OnModuleInit, OnModuleDestroy {
   }
 
   @Get('get-one/:id')
-  @CacheTTL(6000)
-  @CacheKey('get-user')
+  //@CacheTTL(6000)
+  //@CacheKey('get-user')
   //@ApiBearerAuth('jwt')
   //@UseGuards(JwtAuthGuard)
-  async getUser(@Param('id', ParseUUIDPipe) id: string): Promise<UserOrNull> {
-    return await this.service.getUser(id);
+  async getUser(@Param('id', ParseUUIDPipe) id: string): Promise<any> {
+    const user: User = await this.service.getUser(id);
+    return user;
   }
 
   @Put('update-one/:id')
