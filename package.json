@@ -18,7 +18,7 @@
     "start:prod": "node dist/apps/api/main",
     "prisma-generate": "cd apps/database && prisma generate",
     "prisma-migrate": "cd apps/database && prisma migrate dev --name init --skip-seed",
-    "migrate-up": "npx prisma migrate deploy",
+    "migrate-up": "cd apps/database && npx prisma migrate deploy",
     "seed-init": "npx @snaplet/seed init prisma/seed",
     "seed-sync": "npx @snaplet/seed --config prisma/seed/seed.config.ts sync",
     "seed": "npx tsx apps/database/prisma/seed/seed.ts",

@@ -6,7 +6,7 @@ model Note {
     isPublic        Boolean     @default(false)
     userId          String
     
-    User            User        @relation(fields: [userId], references: [id])
+    User            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
     LabelNotes      LabelNote[] 
     
     createdAt       DateTime    @default(now())

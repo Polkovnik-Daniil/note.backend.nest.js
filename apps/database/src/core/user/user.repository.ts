@@ -1,9 +1,8 @@
 import { PrismaService } from '@database-core/prisma';
-import { UserCreateDto, UserUpdateDto } from 'apps/database/src/validation/user';
+import { UserCreateDto, UserUpdateDto } from '@database-validation/user';
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
-import { UserOrNull, UsersOrNull } from 'apps/database/src/validation/types/user';
-
+import { UserOrNull, UsersOrNull } from '@database-validation/types/user';
 
 @Injectable()
 export class UserRepository {

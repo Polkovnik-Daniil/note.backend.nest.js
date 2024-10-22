@@ -4,8 +4,8 @@ model LabelNote {
     labelId             String              @unique
     isPublic            Boolean             @default(false)
 
-    Label               Label               @relation(fields: [labelId], references: [id])
-    Note                Note                @relation(fields: [noteId], references: [id])
+    Label               Label               @relation(fields: [labelId], references: [id], onDelete: Cascade)
+    Note                Note                @relation(fields: [noteId],  references: [id], onDelete: Cascade)
 
     EditorLabelNotes    EditorLabelNote[]
     ReaderLabelNotes    ReaderLabelNote[]

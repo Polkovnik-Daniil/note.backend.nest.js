@@ -1,4 +1,4 @@
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import {
   Body,
@@ -28,26 +28,47 @@ import { User } from '@prisma/client';
 
 @ApiTags(RoutesEntities.USERS)
 @Controller(RoutesEntities.USERS)
-//@UseInterceptors(CacheInterceptor)
-export class UserController {
+@UseInterceptors(CacheInterceptor)
+export class UserController implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly service: UserService,
     @Inject(NameServices.DATABASE) private readonly client: ClientKafka,
   ) {}
 
+  onModuleInit() {
+    this.client.subscribeToResponseOf(
+      UserEndpointList.CREATE_USER, // + '.*',
+    );
+    this.client.subscribeToResponseOf(
+      UserEndpointList.GET_USER, //+ '.*'
+    );
+    this.client.subscribeToResponseOf(
+      UserEndpointList.UPDATE_USER, // + '.*',
+    );
+    this.client.subscribeToResponseOf(
+      UserEndpointList.DELETE_USER, // + '.*',
+    );
+    this.client.connect();
+  }
+
+  onModuleDestroy() {
+    this.client.close();
+  }
+
   @Post('create-one')
   @CacheTTL(6000)
   @CacheKey('create-user')
-  async createUser(@Body() createDto: UserCreateDto): Promise<UserOrNull> {
-    return await this.service.createUser(createDto);
+  async createUser(@Body() createDto: UserCreateDto): Promise<boolean> {
+    const isCreated: boolean = await this.service.createUser(createDto);
+    return isCreated;
   }
 
   @Get('get-one/:id')
-  //@CacheTTL(6000)
-  //@CacheKey('get-user')
+  @CacheTTL(6000)
+  @CacheKey('get-user')
   //@ApiBearerAuth('jwt')
   //@UseGuards(JwtAuthGuard)
-  async getUser(@Param('id', ParseUUIDPipe) id: string): Promise<any> {
+  async getUser(@Param('id', ParseUUIDPipe) id: string): Promise<UserOrNull> {
     const user: User = await this.service.getUser(id);
     return user;
   }
@@ -59,17 +80,16 @@ export class UserController {
   async updateUser(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateDto: UserUpdateDto,
-  ): Promise<UserOrNull> {
-    return await this.service.updateUser(id, updateDto);
+  ): Promise<boolean> {
+    const isUpdated: boolean = await this.service.updateUser(id, updateDto);
+    return isUpdated;
   }
 
   @Delete('delete-one/:id')
-  @CacheTTL(6000)
-  @CacheKey('delete-user')
-  async deleteUser(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<UserOrNull> {
-    console.log('d');
-    return await this.service.deleteUser(id);
+  //@CacheTTL(6000)
+  //@CacheKey('delete-user')
+  async deleteUser(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
+    const isDeleted: boolean = await this.service.deleteUser(id);
+    return isDeleted;
   }
 }

@@ -14,7 +14,9 @@
       "@api-core/*":            ["apps/api/src/core/*"],
       "@api-constants/*":       ["apps/api/src/constants/*"],
       "@database-core/*":       ["apps/database/src/core/*"],
+      "@database-helpers/*":    ["apps/database/src/helpers/*"],
       "@database-constants/*":  ["apps/database/src/constants/*"],
+      "@database-validation/*": ["apps/database/src/validation/*"],
       "@email-core/*":          ["apps/email/src/core/*"],
       "@validation-core/*":     ["apps/database/src/validation/*"],
       "@local-types/*":         ["apps/database/src/validation/types/*"]

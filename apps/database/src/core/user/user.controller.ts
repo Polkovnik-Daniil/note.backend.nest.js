@@ -1,37 +1,40 @@
-import { Controller, Get, OnModuleInit } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { UserService } from './user.service';
-import { EventPattern, MessagePattern } from '@nestjs/microservices';
+import { MessagePattern } from '@nestjs/microservices';
 import { UserCreateEventDto, UserUpdateEventDto } from '@validation-core/user';
 import { UserEndpointList } from '@validation-core/types';
 import { User } from '@prisma/client';
+import { isObjectNotNull } from '@database-helpers/common';
 
 @Controller()
 export class UserController {
   constructor(private readonly databaseService: UserService) {}
 
-  //@EventPattern(UserEndpointList.GET_USER)
   @MessagePattern(UserEndpointList.GET_USER)
   async handlerGetUser(id: string) {
     const user: User = await this.databaseService.getUser(id);
-    console.log(user);
     return user;
   }
 
-  @EventPattern(UserEndpointList.CREATE_USER)
+  @MessagePattern(UserEndpointList.CREATE_USER)
   async handlerCreateUser(userCreateEventDto: UserCreateEventDto) {
-    return await this.databaseService.createUser(userCreateEventDto);
+    const user: User =
+      await this.databaseService.createUser(userCreateEventDto);
+    return isObjectNotNull(user);
   }
 
-  @EventPattern(UserEndpointList.UPDATE_USER)
-  handlerUpdateUser(userUpdateEventDto: UserUpdateEventDto) {
-    return this.databaseService.updateUser(
+  @MessagePattern(UserEndpointList.UPDATE_USER)
+  async handlerUpdateUser(userUpdateEventDto: UserUpdateEventDto) {
+    const user: User = await this.databaseService.updateUser(
       userUpdateEventDto.id,
       userUpdateEventDto,
     );
+    return isObjectNotNull(user);
   }
 
-  @EventPattern(UserEndpointList.DELETE_USER)
-  handlerDeleteUser(id: string) {
-    return this.databaseService.deleteUser(id);
+  @MessagePattern(UserEndpointList.DELETE_USER)
+  async handlerDeleteUser(id: string) {
+    const user: User = await this.databaseService.deleteUser(id);
+    return isObjectNotNull(user);
   }
 }

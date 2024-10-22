@@ -3,7 +3,7 @@ model Label {
     name            String
     userId          String
     
-    User            User        @relation(fields: [userId], references: [id])
+    User            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
     LabelNotes      LabelNote[]
 
     createdAt       DateTime    @default(now())

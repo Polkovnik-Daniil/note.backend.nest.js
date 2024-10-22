@@ -1,11 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserRepository } from './user.repository';
-import { Prisma, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import {
   UserCreateEventDto,
   UserUpdateEventDto,
-} from 'apps/database/src/validation/user';
-import { UserOrNull, UsersOrNull } from '@validation-core/types';
+} from '@database-validation/user';
+import { UserOrNull } from '@validation-core/types';
 
 @Injectable()
 export class UserService {
@@ -26,19 +26,12 @@ export class UserService {
   }
 
   async getUser(id: string): Promise<UserOrNull> {
-    return await this.repository.getUserById(id);
-  }
-
-  async getUsers(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.UserWhereUniqueInput;
-    where?: Prisma.UserWhereInput;
-    orderBy?: Prisma.UserOrderByWithRelationInput;
-  }): Promise<UsersOrNull> {
-    const { skip, take, cursor, where, orderBy } = params;
-    await this.repository.getUsers(skip, take, cursor, where, orderBy);
-    return;
+    try {
+      const user: User = await this.repository.getUserById(id);
+      return user;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
   }
 
   async updateUser(id: string, data: UserUpdateEventDto): Promise<UserOrNull> {
