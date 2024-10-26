@@ -8,7 +8,7 @@ import { NoteCreateDto, NoteUpdateDto } from '@database-validation/note';
 export class NoteRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createNote(data: NoteCreateDto): Promise<NoteOrNull> {
+  async create(data: NoteCreateDto): Promise<NoteOrNull> {
     return this.prisma.note.create({ data });
   }
 
@@ -16,14 +16,14 @@ export class NoteRepository {
     return this.prisma.note.findUnique({ where: { id } });
   }
 
-  async updateNote(id: string, updateDto: NoteUpdateDto): Promise<NoteOrNull> {
+  async update(id: string, updateDto: NoteUpdateDto): Promise<NoteOrNull> {
     return this.prisma.note.update({
       where: { id },
       data: updateDto,
     });
   }
 
-  async deleteNote(id: string): Promise<Note> {
+  async delete(id: string): Promise<Note> {
     return this.prisma.note.delete({ where: { id } });
   }
 }

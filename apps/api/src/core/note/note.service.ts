@@ -1,10 +1,10 @@
 import { Note } from '@prisma/client';
+import { firstValueFrom } from 'rxjs';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { NoteEndpointList } from '@local-types/note';
 import { NoteCreateDto, NoteUpdateDto } from '@database-validation/note';
 import { NameServices } from '@validation-core/types';
-import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class NoteService {
@@ -12,7 +12,7 @@ export class NoteService {
     @Inject(NameServices.DATABASE) private readonly client: ClientKafka,
   ) {}
 
-  async createNote(data: NoteCreateDto): Promise<boolean> {
+  async create(data: NoteCreateDto): Promise<boolean> {
     let statusCode = HttpStatus.CONFLICT;
     try {
       const isCreated: boolean = await firstValueFrom(
@@ -24,7 +24,7 @@ export class NoteService {
     }
   }
 
-  async getNote(id: string): Promise<Note> {
+  async getNoteById(id: string): Promise<Note> {
     let statusCode = HttpStatus.CONFLICT;
     try {
       const note: Note = await firstValueFrom(
@@ -36,7 +36,7 @@ export class NoteService {
     }
   }
 
-  async updateNote(id: string, data: NoteUpdateDto): Promise<boolean> {
+  async update(id: string, data: NoteUpdateDto): Promise<boolean> {
     let statusCode = HttpStatus.CONFLICT;
     try {
       data.id = id;
@@ -49,7 +49,7 @@ export class NoteService {
     }
   }
 
-  async deleteNote(id: string): Promise<boolean> {
+  async delete(id: string): Promise<boolean> {
     let statusCode = HttpStatus.CONFLICT;
     try {
       const isDeleted: boolean = await firstValueFrom(

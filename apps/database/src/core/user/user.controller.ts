@@ -10,31 +10,34 @@ import { isObjectNotNull } from '@database-helpers/common';
 export class UserController {
   constructor(private readonly databaseService: UserService) {}
 
-  @MessagePattern(UserEndpointList.GET_USER)
-  async handlerGetUser(id: string) {
-    const user: User = await this.databaseService.getUser(id);
-    return user;
-  }
-
   @MessagePattern(UserEndpointList.CREATE_USER)
-  async handlerCreateUser(userCreateEventDto: UserCreateEventDto) {
-    const user: User =
-      await this.databaseService.createUser(userCreateEventDto);
+  async handlerCreateUser(
+    createEventDto: UserCreateEventDto,
+  ): Promise<boolean> {
+    const user: User = await this.databaseService.create(createEventDto);
     return isObjectNotNull(user);
   }
 
+  @MessagePattern(UserEndpointList.GET_USER)
+  async handlerGetUser(id: string): Promise<User> {
+    const user: User = await this.databaseService.getUserById(id);
+    return user;
+  }
+
   @MessagePattern(UserEndpointList.UPDATE_USER)
-  async handlerUpdateUser(userUpdateEventDto: UserUpdateEventDto) {
-    const user: User = await this.databaseService.updateUser(
-      userUpdateEventDto.id,
-      userUpdateEventDto,
+  async handlerUpdateUser(
+    updateEventDto: UserUpdateEventDto,
+  ): Promise<boolean> {
+    const user: User = await this.databaseService.update(
+      updateEventDto.id,
+      updateEventDto,
     );
     return isObjectNotNull(user);
   }
 
   @MessagePattern(UserEndpointList.DELETE_USER)
-  async handlerDeleteUser(id: string) {
-    const user: User = await this.databaseService.deleteUser(id);
+  async handlerDeleteUser(id: string): Promise<boolean> {
+    const user: User = await this.databaseService.delete(id);
     return isObjectNotNull(user);
   }
 }

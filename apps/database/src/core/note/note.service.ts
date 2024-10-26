@@ -10,15 +10,15 @@ import { NoteOrNull } from '@validation-core/types/note';
 @Injectable()
 export class NoteService {
   constructor(private readonly repository: NoteRepository) {}
-  async createNote(data: NoteCreateEventDto): Promise<NoteOrNull> {
+  async create(createEventDto: NoteCreateEventDto): Promise<NoteOrNull> {
     try {
-      return await this.repository.createNote(data);
+      return await this.repository.create(createEventDto);
     } catch (error) {
       throw new Error((error as Error).message);
     }
   }
 
-  async getNote(id: string): Promise<NoteOrNull> {
+  async getNoteById(id: string): Promise<NoteOrNull> {
     try {
       const note: Note = await this.repository.getNoteById(id);
       return note;
@@ -27,27 +27,30 @@ export class NoteService {
     }
   }
 
-  async updateNote(id: string, data: NoteUpdateEventDto): Promise<NoteOrNull> {
+  async update(
+    id: string,
+    updateEventDto: NoteUpdateEventDto,
+  ): Promise<NoteOrNull> {
     try {
       //Check is exists note
       const note: Note = await this.repository.getNoteById(id);
       if (!note) {
         throw new Error(`The note does not exist with this id - ${id}!`); //todo: Изменить название ошибки
       }
-      return await this.repository.updateNote(id, data);
+      return await this.repository.update(id, updateEventDto);
     } catch (error) {
       throw new Error((error as Error).message);
     }
   }
 
-  async deleteNote(id: string): Promise<NoteOrNull> {
+  async delete(id: string): Promise<NoteOrNull> {
     try {
       //Check is exists note
       const note: Note = await this.repository.getNoteById(id);
       if (!note) {
         throw new Error(`The note already deleted!`); //todo: Изменить название ошибки
       }
-      return await this.repository.deleteNote(id);
+      return await this.repository.delete(id);
     } catch (error) {
       throw new Error((error as Error).message);
     }

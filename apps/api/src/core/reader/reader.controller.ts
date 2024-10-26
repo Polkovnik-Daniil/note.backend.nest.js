@@ -1,5 +1,5 @@
 import { ApiTags } from '@nestjs/swagger';
-import { UserService } from './user.service';
+import { ReaderService } from './reader.service';
 import {
   Body,
   Controller,
@@ -16,36 +16,37 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import { ReaderCreateDto, ReaderUpdateDto } from '@database-validation/reader';
 import {
-  UserCreateDto,
-  UserUpdateDto,
-} from 'apps/database/src/validation/user';
-import { User } from '@prisma/client';
+  ReaderEndpointList,
+  ReaderOrNull,
+} from '@validation-core/types/reader';
 import { ClientKafka } from '@nestjs/microservices';
-import { RoutesEntities, NameServices } from '@validation-core/types';
-import { UserEndpointList, UserOrNull } from '@validation-core/types/user';
+import { NameServices } from '@local-types/name.services.enum';
+import { RoutesEntities } from '@local-types/routes.entities';
+import { Reader } from '@prisma/client';
 
-@ApiTags(RoutesEntities.USERS)
-@Controller(RoutesEntities.USERS)
+@ApiTags(RoutesEntities.READERS)
+@Controller(RoutesEntities.READERS)
 @UseInterceptors(CacheInterceptor)
-export class UserController implements OnModuleInit, OnModuleDestroy {
+export class ReaderController implements OnModuleInit, OnModuleDestroy {
   constructor(
-    private readonly service: UserService,
+    private readonly service: ReaderService,
     @Inject(NameServices.DATABASE) private readonly client: ClientKafka,
   ) {}
 
   onModuleInit() {
     this.client.subscribeToResponseOf(
-      UserEndpointList.CREATE_USER, // + '.*',
+      ReaderEndpointList.CREATE_READER, // + '.*',
     );
     this.client.subscribeToResponseOf(
-      UserEndpointList.GET_USER, //+ '.*'
+      ReaderEndpointList.GET_READER, //+ '.*'
     );
     this.client.subscribeToResponseOf(
-      UserEndpointList.UPDATE_USER, // + '.*',
+      ReaderEndpointList.UPDATE_READER, // + '.*',
     );
     this.client.subscribeToResponseOf(
-      UserEndpointList.DELETE_USER, // + '.*',
+      ReaderEndpointList.DELETE_READER, // + '.*',
     );
     this.client.connect();
   }
@@ -56,31 +57,31 @@ export class UserController implements OnModuleInit, OnModuleDestroy {
 
   @Post('create-one')
   @CacheTTL(6000)
-  @CacheKey('create-user')
-  async create(@Body() createDto: UserCreateDto): Promise<boolean> {
+  @CacheKey('create-reader')
+  async create(@Body() createDto: ReaderCreateDto): Promise<boolean> {
     const isCreated: boolean = await this.service.create(createDto);
     return isCreated;
   }
 
   @Get('get-one/:id')
   @CacheTTL(6000)
-  @CacheKey('get-user')
+  @CacheKey('get-reader')
   //@ApiBearerAuth('jwt')
   //@UseGuards(JwtAuthGuard)
-  async getUserById(
+  async getReaderById(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<UserOrNull> {
-    const user: User = await this.service.getUserById(id);
-    return user;
+  ): Promise<ReaderOrNull> {
+    const reader: Reader = await this.service.getReaderById(id);
+    return reader;
   }
 
   @Put('update-one/:id')
   @Patch('update-one/:id')
   @CacheTTL(6000)
-  @CacheKey('update-user')
+  @CacheKey('update-reader')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateDto: UserUpdateDto,
+    @Body() updateDto: ReaderUpdateDto,
   ): Promise<boolean> {
     const isUpdated: boolean = await this.service.update(id, updateDto);
     return isUpdated;
@@ -88,7 +89,7 @@ export class UserController implements OnModuleInit, OnModuleDestroy {
 
   @Delete('delete-one/:id')
   //@CacheTTL(6000)
-  //@CacheKey('delete-user')
+  //@CacheKey('delete-note')
   async delete(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
     const isDeleted: boolean = await this.service.delete(id);
     return isDeleted;

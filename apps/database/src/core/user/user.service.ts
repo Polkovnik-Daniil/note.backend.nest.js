@@ -10,7 +10,7 @@ import { UserOrNull } from '@validation-core/types';
 @Injectable()
 export class UserService {
   constructor(private readonly repository: UserRepository) {}
-  async createUser(data: UserCreateEventDto): Promise<UserOrNull> {
+  async create(data: UserCreateEventDto): Promise<UserOrNull> {
     try {
       //Check is exists user
       const user: User = await this.repository.getUserByEmail(data.email);
@@ -19,13 +19,13 @@ export class UserService {
           `A user with such an email ${user.email} already exists!`,
         );
       }
-      return await this.repository.createUser(data);
+      return await this.repository.create(data);
     } catch (error) {
       throw new Error((error as Error).message);
     }
   }
 
-  async getUser(id: string): Promise<UserOrNull> {
+  async getUserById(id: string): Promise<UserOrNull> {
     try {
       const user: User = await this.repository.getUserById(id);
       return user;
@@ -34,27 +34,27 @@ export class UserService {
     }
   }
 
-  async updateUser(id: string, data: UserUpdateEventDto): Promise<UserOrNull> {
+  async update(id: string, data: UserUpdateEventDto): Promise<UserOrNull> {
     try {
       //Check is exists user
       const user: User = await this.repository.getUserById(id);
       if (!user) {
         throw new Error(`The user does not exist with this id - ${id}!`);
       }
-      return await this.repository.updateUser(id, data);
+      return await this.repository.update(id, data);
     } catch (error) {
       throw new Error((error as Error).message);
     }
   }
 
-  async deleteUser(id: string): Promise<UserOrNull> {
+  async delete(id: string): Promise<UserOrNull> {
     try {
       //Check is exists user
       const user: User = await this.repository.getUserById(id);
       if (!user) {
         throw new Error(`The user already deleted!`);
       }
-      return await this.repository.deleteUser(id);
+      return await this.repository.delete(id);
     } catch (error) {
       throw new Error((error as Error).message);
     }

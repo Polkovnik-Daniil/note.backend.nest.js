@@ -55,8 +55,8 @@ export class NoteController implements OnModuleInit, OnModuleDestroy {
   @Post('create-one')
   @CacheTTL(6000)
   @CacheKey('create-note')
-  async createNote(@Body() createDto: NoteCreateDto): Promise<boolean> {
-    const isCreated: boolean = await this.service.createNote(createDto);
+  async create(@Body() createDto: NoteCreateDto): Promise<boolean> {
+    const isCreated: boolean = await this.service.create(createDto);
     return isCreated;
   }
 
@@ -65,8 +65,10 @@ export class NoteController implements OnModuleInit, OnModuleDestroy {
   @CacheKey('get-note')
   //@ApiBearerAuth('jwt')
   //@UseGuards(JwtAuthGuard)
-  async getNote(@Param('id', ParseUUIDPipe) id: string): Promise<NoteOrNull> {
-    const note: Note = await this.service.getNote(id);
+  async getNoteById(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<NoteOrNull> {
+    const note: Note = await this.service.getNoteById(id);
     return note;
   }
 
@@ -74,19 +76,19 @@ export class NoteController implements OnModuleInit, OnModuleDestroy {
   @Patch('update-one/:id')
   @CacheTTL(6000)
   @CacheKey('update-note')
-  async updateNote(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateDto: NoteUpdateDto,
   ): Promise<boolean> {
-    const isUpdated: boolean = await this.service.updateNote(id, updateDto);
+    const isUpdated: boolean = await this.service.update(id, updateDto);
     return isUpdated;
   }
 
   @Delete('delete-one/:id')
   //@CacheTTL(6000)
   //@CacheKey('delete-note')
-  async deleteNote(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
-    const isDeleted: boolean = await this.service.deleteNote(id);
+  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<boolean> {
+    const isDeleted: boolean = await this.service.delete(id);
     return isDeleted;
   }
 }
